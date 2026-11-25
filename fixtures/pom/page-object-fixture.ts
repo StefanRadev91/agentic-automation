@@ -1,4 +1,5 @@
 import { test as base } from '@playwright/test';
+import { BookingDetailsPage } from '../../pages/app/booking-details.page';
 import { BookingsPage } from '../../pages/app/bookings.page';
 import { EventDetailsPage } from '../../pages/app/event-details.page';
 import { EventsPage } from '../../pages/app/events.page';
@@ -13,6 +14,7 @@ export type FrameworkFixtures = {
     eventsPage: EventsPage;
     eventDetailsPage: EventDetailsPage;
     bookingsPage: BookingsPage;
+    bookingDetailsPage: BookingDetailsPage;
     /** Clears cookies, permissions and the app's web storage so the test starts signed out */
     resetStorageState: () => Promise<void>;
 };
@@ -41,6 +43,10 @@ export const test = base.extend<FrameworkFixtures>({
 
     bookingsPage: async ({ page }, use) => {
         await use(new BookingsPage(page));
+    },
+
+    bookingDetailsPage: async ({ page }, use) => {
+        await use(new BookingDetailsPage(page));
     },
 
     resetStorageState: async ({ context, page }, use) => {

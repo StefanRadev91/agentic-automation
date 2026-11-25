@@ -1,6 +1,6 @@
 name: Playwright Tests
 
-# Runs the whole suite (UI + E2E + API) against the public EventHub practice
+# Runs the whole suite (UI + E2E + API; Chromium and WebKit) against the public EventHub practice
 # app and publishes the HTML report to GitHub Pages.
 # Nothing here is a secret: the URLs are public and every run registers its
 # own throwaway EventHub account (see tests/app/auth-api.setup.ts).
@@ -47,10 +47,10 @@ jobs:
                   } > env/.env.dev
 
             - name: Install Playwright browser
-              run: npx playwright install --with-deps chromium
+              run: npx playwright install --with-deps chromium webkit
 
             - name: Run Playwright tests
-              run: npx playwright test --project=chromium --project=api --reporter=html
+              run: npx playwright test --project=chromium --project=webkit --project=api --reporter=html
 
             - uses: actions/upload-artifact@v7
               if: always()

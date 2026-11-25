@@ -15,17 +15,22 @@ End-to-end and API test automation for **EventHub**, the public practice app fro
 
 ## What is covered
 
-| Layer | Area                                        | Tests |
-| ----- | ------------------------------------------- | ----: |
-| API   | Auth: register, login, `/auth/me`           |    30 |
-| API   | Events: list, filters, CRUD                 |    31 |
-| API   | Bookings: create, read, list, cancel        |    21 |
-| API   | Health and feature flags                    |     2 |
-| UI    | Login, validation, logout                   |    13 |
-| UI    | Registration                                |     2 |
-| UI    | Events list: search and category filter     |     4 |
-| UI    | My Bookings: list and cancel                |     2 |
-| E2E   | Book through the UI, verify through the API |     1 |
+| Layer | Area                                          | Tests |
+| ----- | --------------------------------------------- | ----: |
+| API   | Auth: register, login, `/auth/me`             |    30 |
+| API   | Events: list, pagination, filters, CRUD       |    34 |
+| API   | Bookings: create, read, list, cancel          |    21 |
+| API   | Health and feature flags                      |     2 |
+| UI    | Login, validation, logout                     |    13 |
+| UI    | Registration                                  |     2 |
+| UI    | Events list: search, category and city filter |     5 |
+| UI    | My Bookings: list, cancel, clear all          |     3 |
+| UI    | Booking details and refund eligibility        |     3 |
+| UI    | Accessibility (axe-core, WCAG 2.x A/AA)       |     4 |
+| E2E   | Book through the UI, verify through the API   |     1 |
+
+UI and E2E tests run on **Chromium and WebKit** in CI (`npm run test:chromium`,
+`test:webkit`). A Firefox project is configured too (`npm run test:firefox`).
 
 Tests are tagged `@smoke`, `@regression`, `@api` or `@e2e` (exactly one per test), so a
 subset runs with `npm run test:smoke`, `test:regression`, `test:api` or `test:e2e`.
@@ -41,6 +46,11 @@ the test is kept and marked `test.skip` with a `// FIXME` instead of loosening t
 | `POST /auth/register`               | `400` on bad input | `500` when `password` is a number or boolean |
 | `GET /events/{id}` (id = `abc`)     | `404`/`4xx`        | `500 Internal server error`                  |
 | `Event.price`, `Booking.totalPrice` | number             | numeric string (`"300"`)                     |
+
+Accessibility (axe-core): the sign-in, events and My Bookings pages fail the WCAG AA
+`color-contrast` rule, and the two filters on the events page fail `select-name` (no
+accessible name). The active tests ignore exactly these known rules, so any _new_ serious or
+critical violation still fails; one skipped test documents the strict version.
 
 Also undocumented: `/events` and `/bookings` require a token (`401` without one), and
 responses carry extra fields (`isStatic`, `userId`, `details`).
@@ -83,6 +93,7 @@ npm test                 # everything (UI + API)
 npm run test:api         # API only, no browser
 npm run test:smoke       # smoke tests
 npm run test:ui          # Playwright UI mode
+npm run test:webkit      # UI suite on WebKit
 npm run report           # open the last HTML report
 npm run lint
 ```
@@ -90,8 +101,23 @@ npm run lint
 ## CI
 
 GitHub Actions runs the suite on every push and pull request, uploads the HTML report as an
-artifact, and publishes it to GitHub Pages from `main`. A separate workflow lints and
+artifact, and publishes it to GitHub Pages from `main` (Chromium, WebKit and API projects). A separate workflow lints and
 type-checks the project.
+
+## Working with an AI coding assistant
+
+The repository is set up for AI-assisted development, and this project was built that way.
+The rules live in [AGENTS.md](AGENTS.md) (with [CLAUDE.md](CLAUDE.md) for Claude Code) and the
+detailed skills in `.claude/skills/` and `.agents/skills/`.
+
+- The assistant explores the live app with `playwright-cli` before it writes any page object or
+  selector, and builds API schemas from the OpenAPI document, not from guessed responses.
+- It proposes a plan, then writes code under the rules (no XPath, no hard waits, no `any`,
+  strict Zod schemas, one tag per test).
+- Nothing counts as done until ESLint, Prettier, the type-check and the affected tests pass. The
+  same checks run in the pre-commit hook and in CI, so they apply to every contributor.
+- Where the live API contradicts its documentation, the test is skipped with a `FIXME` instead
+  of weakening the schema (see "Bugs found in the application").
 
 ## Credits
 

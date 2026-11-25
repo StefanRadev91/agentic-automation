@@ -1,6 +1,6 @@
 {
     "name": "agentic-automation",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "private": true,
     "description": "Playwright + TypeScript test automation for EventHub: UI, E2E and OpenAPI-contract API tests with Zod schemas.",
     "scripts": {
@@ -44,6 +44,7 @@
     "author": "Stefan Radev",
     "license": "MIT",
     "devDependencies": {
+        "@axe-core/playwright": "^4.14.1",
         "@faker-js/faker": "^10.6.0",
         "@playwright/cli": "^0.1.24",
         "@playwright/test": "^1.65.0",
@@ -72,5 +73,10 @@
     },
     "engines": {
         "node": ">=22"
+    },
+    "overrides": {
+        "@axe-core/playwright": {
+            "playwright-core": "1.65.0"
+        }
     }
 }

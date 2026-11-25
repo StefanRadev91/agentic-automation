@@ -1,5 +1,5 @@
 import { Locator, Page } from '@playwright/test';
-import { AppRoutes, EventCategory } from '../../enums/app/app';
+import { AppRoutes, EventCategory, EventCity } from '../../enums/app/app';
 import { NavigationComponent } from '../components/navigation.component';
 
 /**
@@ -74,6 +74,16 @@ export class EventsPage {
      */
     async filterByCategory(category: EventCategory): Promise<void> {
         await this.categoryFilter.selectOption(category);
+    }
+
+    /**
+     * Filters the list by city.
+     *
+     * @param {EventCity} city - City to show.
+     * @returns {Promise<void>}
+     */
+    async filterByCity(city: EventCity): Promise<void> {
+        await this.cityFilter.selectOption(city);
     }
 
     /**

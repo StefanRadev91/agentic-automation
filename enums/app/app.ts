@@ -12,6 +12,8 @@ export enum Messages {
     BOOKING_CONFIRMED = 'Booking Confirmed! 🎉',
     NO_BOOKINGS = 'No bookings yet',
     TICKETS = 'tickets',
+    REFUND_ELIGIBLE = 'Eligible for refund',
+    REFUND_NOT_ELIGIBLE = 'Not eligible for refund',
 }
 
 /** UI route paths */
@@ -43,6 +45,16 @@ export enum EventCategory {
     FESTIVAL = 'Festival',
 }
 
+/** Cities offered in the events list filter */
+export enum EventCity {
+    MUMBAI = 'Mumbai',
+    BANGALORE = 'Bangalore',
+    DELHI = 'Delhi',
+    HYDERABAD = 'Hyderabad',
+    CHENNAI = 'Chennai',
+    PUNE = 'Pune',
+}
+
 /** Booking lifecycle states */
 export enum BookingStatus {
     CONFIRMED = 'confirmed',
@@ -55,6 +67,5 @@ export enum BookingStatus {
  */
 export enum StorageStatePaths {
     APP = '.auth/app/appStorageState.json',
-    API_ACCESS_TOKEN = '.auth/app/apiAccessToken.json',
     TEST_USER = '.auth/app/testUser.json',
 }

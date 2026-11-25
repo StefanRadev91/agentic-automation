@@ -112,24 +112,28 @@ export default defineConfig({
             dependencies: ['setup-api', 'setup-ui'],
         },
 
-        /* Firefox - commented out by default */
-        // {
-        //     name: 'firefox',
-        //     use: {
-        //         ...devices['Desktop Firefox'],
-        //         storageState: '.auth/app/appStorageState.json',
-        //     },
-        //     dependencies: ['setup-api', 'setup-ui'],
-        // },
+        /* Firefox - same UI suite, same signed-in storage state */
+        {
+            name: 'firefox',
+            testIgnore: /.*\/api\/.*\.spec\.ts/,
+            use: {
+                ...devices['Desktop Firefox'],
+                storageState: StorageStatePaths.APP,
+                viewport: { width: 1920, height: 1080 },
+            },
+            dependencies: ['setup-api', 'setup-ui'],
+        },
 
-        /* WebKit - commented out by default */
-        // {
-        //     name: 'webkit',
-        //     use: {
-        //         ...devices['Desktop Safari'],
-        //         storageState: '.auth/app/appStorageState.json',
-        //     },
-        //     dependencies: ['setup-api', 'setup-ui'],
-        // },
+        /* WebKit (Safari engine) - same UI suite, same signed-in storage state */
+        {
+            name: 'webkit',
+            testIgnore: /.*\/api\/.*\.spec\.ts/,
+            use: {
+                ...devices['Desktop Safari'],
+                storageState: StorageStatePaths.APP,
+                viewport: { width: 1920, height: 1080 },
+            },
+            dependencies: ['setup-api', 'setup-ui'],
+        },
     ],
 });

@@ -119,6 +119,77 @@ test.describe('api/events', () => {
             }
         );
 
+        test(
+            'should paginate consistently across pages',
+            { tag: '@api' },
+            async ({ apiRequest }) => {
+                const pageOne = await apiRequest<EventListResponse>({
+                    method: 'GET',
+                    url: `${ApiEndpoints.EVENTS}?page=1&limit=1`,
+                    baseUrl: process.env.API_URL,
+                    headers: process.env.ACCESS_TOKEN,
+                });
+                const pageTwo = await apiRequest<EventListResponse>({
+                    method: 'GET',
+                    url: `${ApiEndpoints.EVENTS}?page=2&limit=1`,
+                    baseUrl: process.env.API_URL,
+                    headers: process.env.ACCESS_TOKEN,
+                });
+
+                expect(pageOne.status).toBe(200);
+                expect(pageTwo.status).toBe(200);
+                expect(
+                    EventListResponseSchema.parse(pageOne.body)
+                ).toBeTruthy();
+                expect(
+                    EventListResponseSchema.parse(pageTwo.body)
+                ).toBeTruthy();
+                expect(pageTwo.body.pagination.page).toBe(2);
+                expect(pageOne.body.data[0].id).not.toBe(
+                    pageTwo.body.data[0].id
+                );
+                expect(pageOne.body.pagination.totalPages).toBe(
+                    Math.ceil(
+                        pageOne.body.pagination.total /
+                            pageOne.body.pagination.limit
+                    )
+                );
+            }
+        );
+
+        test(
+            'should return an empty page beyond the last one',
+            { tag: '@api' },
+            async ({ apiRequest }) => {
+                const { status, body } = await apiRequest<EventListResponse>({
+                    method: 'GET',
+                    url: `${ApiEndpoints.EVENTS}?page=999999&limit=1`,
+                    baseUrl: process.env.API_URL,
+                    headers: process.env.ACCESS_TOKEN,
+                });
+
+                expect(status).toBe(200);
+                expect(EventListResponseSchema.parse(body)).toBeTruthy();
+                expect(body.data).toHaveLength(0);
+            }
+        );
+
+        // FIXME: https://api.eventhub.rahulshettyacademy.com/api/docs - the contract caps `limit` at 100, the live API accepts 101 and echoes it back.
+        test.skip(
+            'should cap the page size at 100',
+            { tag: '@api' },
+            async ({ apiRequest }) => {
+                const { body } = await apiRequest<EventListResponse>({
+                    method: 'GET',
+                    url: `${ApiEndpoints.EVENTS}?limit=101`,
+                    baseUrl: process.env.API_URL,
+                    headers: process.env.ACCESS_TOKEN,
+                });
+
+                expect(body.pagination.limit).toBeLessThanOrEqual(100);
+            }
+        );
+
         // The OpenAPI contract does not document 401 for this route; the live
         // API protects it, so the behavior is pinned here.
         test(
