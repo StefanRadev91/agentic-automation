@@ -9,4 +9,11 @@ export const appConfig = {
     appUrl: process.env.APP_URL!,
     /** Backend API URL loaded from the API_URL env variable */
     apiUrl: process.env.API_URL!,
+    /**
+     * How many times Playwright retries an API call that fails with a dropped
+     * connection (ECONNRESET). The public EventHub server closes idle
+     * keep-alive sockets, which would otherwise fail a teardown call that
+     * runs after a long UI interaction.
+     */
+    apiNetworkRetries: 3,
 };

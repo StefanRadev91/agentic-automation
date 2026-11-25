@@ -1,4 +1,5 @@
 import type { APIRequestContext, APIResponse } from '@playwright/test';
+import { appConfig } from '../../config/app';
 import type { AuthType } from './api-types';
 
 /**
@@ -39,7 +40,8 @@ export async function apiRequest({
     const options: {
         data?: Record<string, unknown> | null;
         headers?: Record<string, string>;
-    } = {};
+        maxRetries?: number;
+    } = { maxRetries: appConfig.apiNetworkRetries };
     if (body) options.data = body;
     if (headers) {
         options.headers = {
